@@ -78,7 +78,7 @@ connecting the spatial concentration profile to gravimetric mass loss.
 If you use this code, please cite:
 
 ```
-[Author], Quantifying Grain Boundary and Bulk Diffusion Contributions in 316 Stainless 
+Y. Fumino, Quantifying Grain Boundary and Bulk Diffusion Contributions in 316 Stainless 
 Steel / FLiBe Corrosion via Multi-Physics Physics-Informed Neural Networks, 
 Journal of Nuclear Materials (submitted).
 ```
