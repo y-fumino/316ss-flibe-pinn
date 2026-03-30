@@ -1,0 +1,9 @@
+# Chromium concentration profile extracted from Zheng et al. (2016) Figure 3(a)
+# Source: G. Zheng, L. He, D. Carpenter, K. Sridharan, J. Nucl. Mater. 482 (2016) 147-155
+# Conditions: 316SS in 316SS crucible, purified FLiBe, 700 C, 3000 h
+# Extracted using WebPlotDigitizer
+# 
+# depth_um: Distance from corroded wall surface (micrometers)
+# Cr_wt_pct: Chromium concentration (wt%)
+depth_um,Cr_wt_pct
+# [Paste your extracted data here]
