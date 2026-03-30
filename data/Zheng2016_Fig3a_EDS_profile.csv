@@ -1,9 +1,56 @@
 # Chromium concentration profile extracted from Zheng et al. (2016) Figure 3(a)
 # Source: G. Zheng, L. He, D. Carpenter, K. Sridharan, J. Nucl. Mater. 482 (2016) 147-155
 # Conditions: 316SS in 316SS crucible, purified FLiBe, 700 C, 3000 h
-# Extracted using WebPlotDigitizer
-# 
+# Extracted using WebPlotDigitizer (48 data points)
+#
 # depth_um: Distance from corroded wall surface (micrometers)
 # Cr_wt_pct: Chromium concentration (wt%)
 depth_um,Cr_wt_pct
-# [Paste your extracted data here]
+0.000,1.187
+1.170,5.479
+3.029,6.814
+4.301,7.704
+6.259,8.595
+8.017,12.297
+9.683,11.264
+11.346,13.338
+13.106,15.709
+14.669,19.262
+16.336,16.602
+18.000,17.789
+19.763,17.496
+21.426,18.682
+23.092,17.206
+24.757,17.505
+26.420,18.248
+27.989,16.772
+29.848,17.958
+31.316,18.257
+33.175,19.888
+34.840,19.595
+36.607,16.944
+38.072,18.713
+39.739,16.645
+41.403,16.652
+43.166,18.134
+44.829,18.729
+46.591,14.864
+49.725,18.143
+51.489,16.815
+53.252,16.670
+54.914,18.744
+56.579,19.339
+58.245,17.271
+59.910,17.570
+61.671,18.461
+63.337,17.281
+65.000,19.355
+66.567,18.618
+68.525,18.770
+70.093,17.589
+71.759,16.707
+73.325,16.705
+74.990,16.119
+76.752,17.601
+78.517,14.942
+79.985,15.832

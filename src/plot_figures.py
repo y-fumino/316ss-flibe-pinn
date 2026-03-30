@@ -1,18 +1,29 @@
+"""
+Figure Generation for Paper
+============================
+
+Generate Figures 1-4 for the paper:
+    Fig. 1: Spatial Cr concentration profile (PINN vs EDS data)
+    Fig. 2: Mass loss vs time (PINN vs measured)
+    Fig. 3: Time evolution of Cr depletion profile
+    Fig. 4: Training loss convergence
+
+Run this script after coupled_pinn_316ss.py has completed training.
+The variables model, losshistory, and all data arrays must be in scope.
+
+Usage:
+    Execute the cells in coupled_pinn_316ss.py first, then run this script
+    in the same Python session or Jupyter notebook.
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+
 # ============================================
-# plot_figures.py
-#
-# Generate Figures 1-4 for the paper
-# Run after coupled_pinn_316ss.py has completed training
-#
-# Fig. 1: Spatial Cr concentration profile (PINN vs EDS data)
-# Fig. 2: Mass loss vs time (PINN vs measured)
-# Fig. 3: Time evolution of Cr depletion profile
-# Fig. 4: Training loss convergence
-#
-# Paste the figure generation code provided by Claude here.
+# Fig. 1: Spatial Cr Concentration Profile
 # ============================================
 
-# === Fig. 1: Spatial Cr concentration profile (PINN vs EDS data) ===
 fig1, ax1 = plt.subplots(figsize=(8, 6))
 
 x_plot = np.linspace(0, 1, 200)
@@ -21,9 +32,9 @@ y_out = model.predict(x_input)
 C_pred = y_out[:, 0].flatten() * C_range + C_surface
 x_um = x_plot * L_depth * 1e4
 
-ax1.plot(x_um, C_pred, 'b-', linewidth=2, 
+ax1.plot(x_um, C_pred, 'b-', linewidth=2,
          label=f'Coupled PINN ($D_{{0,PINN}}$ = {D_base:.1e} cm²/s)')
-ax1.scatter(zheng_x_wall, zheng_Cr, c='red', s=20, alpha=0.5, 
+ax1.scatter(zheng_x_wall, zheng_Cr, c='red', s=20, alpha=0.5,
             label='Zheng et al. [7] (EDS)')
 ax1.set_xlabel('Depth from wall surface (μm)', fontsize=12)
 ax1.set_ylabel('Cr concentration (wt%)', fontsize=12)
@@ -37,7 +48,11 @@ plt.savefig('Fig1_spatial_profile.png', dpi=300, bbox_inches='tight')
 plt.show()
 print("Fig. 1 saved: Fig1_spatial_profile.png")
 
-# === Fig. 2: Mass loss vs time (PINN vs measured) ===
+
+# ============================================
+# Fig. 2: Mass Loss vs Time
+# ============================================
+
 fig2, ax2 = plt.subplots(figsize=(8, 6))
 
 t_check_hr = np.array([1000, 2000, 3000])
@@ -54,7 +69,9 @@ dW_measured_avg = np.array([
     np.mean(dW_data[:2]), np.mean(dW_data[2:4]), np.mean(dW_data[4:])
 ])
 dW_measured_err = np.array([
-    (dW_data[1]-dW_data[0])/2, (dW_data[3]-dW_data[2])/2, (dW_data[5]-dW_data[4])/2
+    (dW_data[1] - dW_data[0]) / 2,
+    (dW_data[3] - dW_data[2]) / 2,
+    (dW_data[5] - dW_data[4]) / 2
 ])
 
 ax2.errorbar(t_check_hr, dW_measured_avg, yerr=dW_measured_err,
@@ -74,7 +91,11 @@ plt.savefig('Fig2_mass_loss.png', dpi=300, bbox_inches='tight')
 plt.show()
 print("Fig. 2 saved: Fig2_mass_loss.png")
 
-# === Fig. 3: Time evolution of Cr depletion profile ===
+
+# ============================================
+# Fig. 3: Time Evolution of Cr Depletion
+# ============================================
+
 fig3, ax3 = plt.subplots(figsize=(8, 6))
 
 times_hr = [0, 500, 1000, 2000, 3000]
@@ -105,7 +126,11 @@ plt.savefig('Fig3_time_evolution.png', dpi=300, bbox_inches='tight')
 plt.show()
 print("Fig. 3 saved: Fig3_time_evolution.png")
 
-# === Fig. 4: Training loss convergence ===
+
+# ============================================
+# Fig. 4: Training Loss Convergence
+# ============================================
+
 fig4, ax4 = plt.subplots(figsize=(8, 5))
 
 loss_train = np.array(losshistory.loss_train)
@@ -130,9 +155,9 @@ plt.savefig('Fig4_training_loss.png', dpi=300, bbox_inches='tight')
 plt.show()
 print("Fig. 4 saved: Fig4_training_loss.png")
 
-print("\n=== 全Figure生成完了 ===")
-print("Fig1_spatial_profile.png  → 論文 Fig. 1")
-print("Fig2_mass_loss.png        → 論文 Fig. 2")
-print("Fig3_time_evolution.png   → 論文 Fig. 3")
-print("Fig4_training_loss.png    → 論文 Fig. 4")
 
+print("\n=== All figures generated ===")
+print("Fig1_spatial_profile.png  -> Paper Fig. 1")
+print("Fig2_mass_loss.png        -> Paper Fig. 2")
+print("Fig3_time_evolution.png   -> Paper Fig. 3")
+print("Fig4_training_loss.png    -> Paper Fig. 4")
