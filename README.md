@@ -10,8 +10,8 @@ This repository contains the source code and extracted experimental data for the
 
 The coupled PINN framework simultaneously assimilates spatial (EDS line scan) and temporal (gravimetric mass loss) experimental data through an auxiliary-variable-based integral mass conservation constraint to estimate:
 
-- **D₀,PINN** = 4.0 × 10⁻¹⁴ cm²/s (base effective diffusion coefficient)
-- **α** = −0.49 (concentration-dependence parameter)
+- **D₀,PINN** = 4.3 × 10⁻¹⁴ cm²/s (base effective diffusion coefficient)
+- **α** = −0.56 (concentration-dependence parameter)
 
 ## Repository Structure
 
