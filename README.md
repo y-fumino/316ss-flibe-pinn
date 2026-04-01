@@ -20,7 +20,7 @@ The coupled PINN framework simultaneously assimilates spatial (EDS line scan) an
 ├── README.md
 ├── requirements.txt
 ├── data/
-│   ├── spatial_Cr_profile_700C_3000h.csv     # Cr concentration vs depth (48 points)
+│   ├── spatial_Cr_profile_700C_3000h.csv      # Cr concentration vs depth (48 points)
 │   └── mass_loss_700C.csv                     # Weight loss at 1000, 2000, 3000 h (6 points)
 ├── src/
 │   ├── coupled_pinn_316ss.py                  # Main coupled PINN model
