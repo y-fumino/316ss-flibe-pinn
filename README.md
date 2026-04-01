@@ -20,11 +20,11 @@ The coupled PINN framework simultaneously assimilates spatial (EDS line scan) an
 ├── README.md
 ├── requirements.txt
 ├── data/
-│   ├── Zheng2016_Fig3a_EDS_profile.csv      # Cr concentration vs depth (48 points)
-│   └── Zheng_PhD_Fig75_mass_loss.csv         # Weight loss at 1000, 2000, 3000 h (6 points)
+│   ├── spatial_Cr_profile_700C_3000h.csv     # Cr concentration vs depth (48 points)
+│   └── mass_loss_700C.csv                     # Weight loss at 1000, 2000, 3000 h (6 points)
 ├── src/
-│   ├── coupled_pinn_316ss.py                 # Main coupled PINN model
-│   └── plot_figures.py                       # Figure generation for the paper
+│   ├── coupled_pinn_316ss.py                  # Main coupled PINN model
+│   └── plot_figures.py                        # Figure generation for the paper
 └── LICENSE
 ```
 
@@ -32,8 +32,8 @@ The coupled PINN framework simultaneously assimilates spatial (EDS line scan) an
 
 All experimental data were extracted from published literature using WebPlotDigitizer:
 
-- **Spatial concentration profile**: G. Zheng, L. He, D. Carpenter, K. Sridharan, J. Nucl. Mater. 482 (2016) 147–155, Figure 3(a).
-- **Mass loss data**: G. Zheng, Ph.D. Thesis, University of Wisconsin–Madison (2015), Figure 75.
+- **Spatial concentration profile**: J. Nucl. Mater. 482 (2016) 147–155, Figure 3(a). 316SS in 316SS crucible, purified FLiBe, 700 °C, 3000 h.
+- **Mass loss data**: Ph.D. Thesis, University of Wisconsin–Madison (2015), Figure 75. 316SS in 316SS crucible, purified FLiBe, 700 °C, 1000–3000 h.
 
 ## Requirements
 

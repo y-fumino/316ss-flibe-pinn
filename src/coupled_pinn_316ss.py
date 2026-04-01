@@ -39,7 +39,7 @@ import matplotlib.pyplot as plt
 # Conditions: 316SS in 316SS crucible, purified FLiBe, 700 C, 3000 h
 # Extracted using WebPlotDigitizer (48 data points)
 
-zheng_x_wall = np.array([
+depth_from_surface = np.array([
     0.000, 1.170, 3.029, 4.301, 6.259, 8.017, 9.683,
     11.346, 13.106, 14.669, 16.336, 18.000, 19.763,
     21.426, 23.092, 24.757, 26.420, 27.989, 29.848,
@@ -50,7 +50,7 @@ zheng_x_wall = np.array([
     73.325, 74.990, 76.752, 78.517, 79.985
 ])  # depth from wall surface (um)
 
-zheng_Cr = np.array([
+Cr_measured = np.array([
     1.187, 5.479, 6.814, 7.704, 8.595, 12.297, 11.264,
     13.338, 15.709, 19.262, 16.602, 17.789, 17.496,
     18.682, 17.206, 17.505, 18.248, 16.772, 17.958,
@@ -88,8 +88,8 @@ T_max_s = T_max_hr * 3600  # Maximum exposure time (s)
 # ============================================
 
 # Spatial profile: normalize x to [0,1] and C to [0,1]
-x_norm_sp = zheng_x_wall * 1e-4 / L_depth
-C_norm_sp = np.clip((zheng_Cr - C_surface) / C_range, 0, 1)
+x_norm_sp = depth_from_surface * 1e-4 / L_depth
+C_norm_sp = np.clip((Cr_measured - C_surface) / C_range, 0, 1)
 
 # Mass loss: convert delta_W (mg/cm^2) to target w(1,t) values
 # delta_W = rho_alloy * (C_range/100) * L_depth * w(1,t) * 1000

@@ -34,8 +34,8 @@ x_um = x_plot * L_depth * 1e4
 
 ax1.plot(x_um, C_pred, 'b-', linewidth=2,
          label=f'Coupled PINN ($D_{{0,PINN}}$ = {D_base:.1e} cm²/s)')
-ax1.scatter(zheng_x_wall, zheng_Cr, c='red', s=20, alpha=0.5,
-            label='Zheng et al. [7] (EDS)')
+ax1.scatter(depth_from_surface, Cr_measured, c='red', s=20, alpha=0.5,
+            label='EDS data [7]')
 ax1.set_xlabel('Depth from wall surface (μm)', fontsize=12)
 ax1.set_ylabel('Cr concentration (wt%)', fontsize=12)
 ax1.legend(fontsize=10)
@@ -108,8 +108,8 @@ for t_hr, color in zip(times_hr, colors):
     C_t = y_out_t[:, 0].flatten() * C_range + C_surface
     ax3.plot(x_um, C_t, color=color, linewidth=2, label=f't = {t_hr} h')
 
-ax3.scatter(zheng_x_wall, zheng_Cr, c='red', s=15, alpha=0.3,
-            label='EDS data (3000 h)', zorder=1)
+ax3.scatter(depth_from_surface, Cr_measured, c='red', s=15, alpha=0.3,
+            label='EDS data (3000 h) [7]', zorder=1)
 ax3.set_xlabel('Depth from wall surface (μm)', fontsize=12)
 ax3.set_ylabel('Cr concentration (wt%)', fontsize=12)
 ax3.set_xlim(0, 80)
