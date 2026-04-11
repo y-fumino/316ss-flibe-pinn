@@ -80,7 +80,7 @@ If you use this code, please cite:
 ```
 Y. Fumino, Quantifying Grain Boundary and Bulk Diffusion Contributions in 316 Stainless 
 Steel / FLiBe Corrosion via Multi-Physics Physics-Informed Neural Networks, 
-Journal of Nuclear Materials (submitted).
+Journal of Nuclear Materials (under review).
 ```
 
 ## License
