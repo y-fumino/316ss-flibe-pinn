@@ -106,6 +106,10 @@ DELTA = {
 # ------------------------------------------------------------------ figures
 def fig1(model, cfg):
     fig, ax = plt.subplots(figsize=(6.2, 4.4))
+    # +-1 sigma plateau-scatter band (sigma ~ 1.25 wt%, Section 4.1): the noise
+    # level that sets the identifiability limits of Section S6.
+    ax.axhspan(cfg["C_bulk"] - 1.25, cfg["C_bulk"] + 1.25, color="0.92",
+               zorder=0, label="±1σ plateau scatter")
     ax.plot(cfg["depth_um"], cfg["Cr_wt"], "o", ms=5, color="0.25",
             label="digitized EDS data (Zheng et al.)")
     xd, Cr = profile_curve(model, cfg)
@@ -201,9 +205,9 @@ def fig5():
         x = np.arange(len(rows))
         ax.bar(x, gap, color="tab:blue", label=r"$|w_\mathrm{gap}|$ (between-collocation)")
         ax.bar(x, w0, bottom=gap, color="tab:orange", label=r"$|w(0,1)|$ (boundary lift)")
-        tot = [g + w for g, w in zip(gap, w0)]
+        tot = [r["audit"]["w_pred_at_x0_t1"] + r["audit"]["w_gap"] for r in rows]
         ax.axhline(st.mean(tot), color="k", lw=1.0, ls="--")
-        ax.set_title(f"{alloy}: violation total {st.mean(tot):.3f} \u00b1 {st.stdev(tot):.3f}")
+        ax.set_title(f"{alloy}: signed violation total {st.mean(tot):.4f} \u00b1 {st.stdev(tot):.4f}")
         ax.set_xticks(x); ax.set_xticklabels([str(r["seed"]) for r in rows], fontsize=8)
         ax.set_xlabel("seed")
     axes[0].set_ylabel("audited conservation violation (normalized mass units)")
