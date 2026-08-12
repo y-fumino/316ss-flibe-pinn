@@ -1,5 +1,9 @@
-deepxde>=1.0.0
-torch>=1.10.0
-numpy>=1.21.0
-matplotlib>=3.5.0
-scipy>=1.7.0
+# Pinned environment for bit-identical reproduction (Level 1, README).
+# Verified: every production campaign reproduces the archived ledgers
+# bit-for-bit under these versions on CPU (float64).
+DeepXDE==1.15.0
+numpy==2.3.5
+scipy==1.17.1
+matplotlib==3.10.8
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.10.0+cpu

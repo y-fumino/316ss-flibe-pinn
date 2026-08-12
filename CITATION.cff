@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software or data, please cite the article below."
+title: "flibe-pinn: A Two-Axis Diagnostic for Molten-Salt Corrosion"
+authors:
+  - family-names: Fumino
+    given-names: Yoshiaki
+    affiliation: "ORCANESH Inc., Tokyo, Japan"
+version: 1.0.0
+date-released: 2026-07-25
+repository-code: "https://github.com/y-fumino/flibe-pinn"
+license: MIT
+preferred-citation:
+  type: article
+  title: "A Two-Axis Diagnostic for Molten-Salt Corrosion: Mass Deficit and Diffusion Regime via a Self-Auditing Inversion"
+  authors:
+    - family-names: Fumino
+      given-names: Yoshiaki
+  journal: "Journal of Nuclear Materials"
+  year: 2026
+  notes: "submitted"

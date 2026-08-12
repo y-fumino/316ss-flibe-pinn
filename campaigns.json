@@ -1,0 +1,324 @@
+{
+  "comment": "Master re-run campaign ledger v2. One batch = one night. Run: python src/run_all.py --batch N1",
+  "seeds_full": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    42
+  ],
+  "batches": {
+    "N1": {
+      "comment": "316SS production configuration: coupled inversion at the full digitized extent (L = 80 um), eleven seeds.",
+      "jobs": [
+        {
+          "tag": "316SS_coupled",
+          "module": "pinn_production_coupled",
+          "alloy": "316SS",
+          "overrides": {}
+        }
+      ]
+    },
+    "N2": {
+      "comment": "Hastelloy-N production configurations: coupled and EDS-only, eleven seeds each.",
+      "jobs": [
+        {
+          "tag": "HN_coupled",
+          "module": "pinn_production_coupled",
+          "alloy": "Hastelloy-N",
+          "overrides": {}
+        },
+        {
+          "tag": "HN_eds_only",
+          "module": "pinn_eds_only",
+          "alloy": "Hastelloy-N",
+          "overrides": {}
+        }
+      ]
+    },
+    "N3": {
+      "comment": "316H production configurations: coupled, EDS-only, and the alpha0 = -1 initialization control (three seeds).",
+      "jobs": [
+        {
+          "tag": "316H_coupled",
+          "module": "pinn_production_coupled",
+          "alloy": "316H",
+          "overrides": {}
+        },
+        {
+          "tag": "316H_eds_only",
+          "module": "pinn_eds_only",
+          "alloy": "316H",
+          "overrides": {}
+        },
+        {
+          "tag": "316H_eds_only_alpha0_minus1",
+          "module": "pinn_eds_only",
+          "alloy": "316H",
+          "overrides": {},
+          "alpha0": -1.0,
+          "seeds": [
+            2,
+            3,
+            4
+          ]
+        }
+      ]
+    },
+    "N4": {
+      "comment": "Mass-anchor weight sweep for 316SS (w_mass = 20/30/40; the production level 10 is the N1 configuration). Consistent-regime arm: establishes that the reported 316SS values are insensitive to the weight.",
+      "jobs": [
+        {
+          "tag": "316SS_wm20",
+          "module": "pinn_production_coupled",
+          "alloy": "316SS",
+          "overrides": {
+            "w_mass": 20
+          }
+        },
+        {
+          "tag": "316SS_wm30",
+          "module": "pinn_production_coupled",
+          "alloy": "316SS",
+          "overrides": {
+            "w_mass": 30
+          }
+        },
+        {
+          "tag": "316SS_wm40",
+          "module": "pinn_production_coupled",
+          "alloy": "316SS",
+          "overrides": {
+            "w_mass": 40
+          }
+        }
+      ]
+    },
+    "N5": {
+      "comment": "Deficit-regime variants, two axes: mass-anchor weight 20 for Hastelloy-N and 316H (the violation total is the weight-invariant quantity, Section 4.3), and the averaged-anchor form for 316H (anchor-form axis).",
+      "jobs": [
+        {
+          "tag": "HN_wm20",
+          "module": "pinn_production_coupled",
+          "alloy": "Hastelloy-N",
+          "overrides": {
+            "w_mass": 20
+          }
+        },
+        {
+          "tag": "316H_wm20",
+          "module": "pinn_production_coupled",
+          "alloy": "316H",
+          "overrides": {
+            "w_mass": 20
+          }
+        },
+        {
+          "tag": "316H_avg_anchor",
+          "module": "pinn_production_coupled",
+          "alloy": "316H",
+          "overrides": {
+            "dW_data": [
+              3.1837837837837832
+            ],
+            "mass_times_hr": [
+              1000.0
+            ]
+          },
+          "comment": "dW_data is the mean of the two same-time gravimetric replicates, (7.66 + 4.12)/2 / 1.85 mg/cm^2, fed as a single anchor at the single measurement time (n_mass = 1), expressed as exact float64 values."
+        }
+      ]
+    },
+    "N6": {
+      "comment": "Section S1 validation under the production protocol: 316SS coupled inversion with a single gravimetric anchor (the 3000 h audit-convention value, 0.547 mg/cm^2) in lieu of the six-point series - the Hastelloy-N-like data structure. Establishes whether reducing the mass constraint to one time point biases the fitted parameters.",
+      "jobs": [
+        {
+          "tag": "316SS_single_anchor",
+          "module": "pinn_production_coupled",
+          "alloy": "316SS",
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            42
+          ],
+          "overrides": {
+            "dW_data": [
+              0.547
+            ],
+            "mass_times_hr": [
+              3000.0
+            ]
+          }
+        }
+      ]
+    },
+    "N7": {
+      "comment": "Synthetic verification (reduced S2 design): four-quadrant sign recovery against known ground truth, and the mass-inflation sweep locating the alpha sign-flip threshold. Three seeds per configuration.",
+      "jobs": [
+        {
+          "tag": "S2_four_quadrant",
+          "module": "pinn_synthetic_s2",
+          "alloy": "SYNTH_4Q",
+          "overrides": {},
+          "seeds": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "tag": "S2_inflation_sweep",
+          "module": "pinn_synthetic_s2",
+          "alloy": "SYNTH_INFLATION",
+          "overrides": {},
+          "seeds": [
+            0,
+            1,
+            2
+          ]
+        }
+      ]
+    },
+    "N8": {
+      "comment": "Domain-size and outlier characterization, eleven seeds per configuration (Section S3): full-extent domains for Hastelloy-N (70 um) and 316H (50 um), reduced domain for 316SS (40 um), and the outlier-inclusion variant for 316H.",
+      "jobs": [
+        {
+          "tag": "HN_fullextent",
+          "module": "pinn_production_coupled",
+          "alloy": "Hastelloy-N",
+          "overrides": {
+            "domain_um": 70.0
+          },
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            42
+          ]
+        },
+        {
+          "tag": "316H_fullextent",
+          "module": "pinn_production_coupled",
+          "alloy": "316H",
+          "overrides": {
+            "domain_um": 50.0
+          },
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            42
+          ]
+        },
+        {
+          "tag": "316SS_L40_insensitivity",
+          "module": "pinn_production_coupled",
+          "alloy": "316SS",
+          "overrides": {
+            "domain_um": 40.0
+          },
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            42
+          ]
+        },
+        {
+          "tag": "316H_outliers_included",
+          "module": "pinn_production_coupled",
+          "alloy": "316H",
+          "overrides": {
+            "outlier_fn": null
+          },
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            42
+          ]
+        }
+      ]
+    },
+    "N9": {
+      "comment": "Quadratic-closure probes, EDS-only, polynomial basis (Tables S10a-S10c): regenerates the pre-reform inherited exhibits as a current-generation campaign. Three seeds per alloy.",
+      "jobs": [
+        {
+          "tag": "HN_quad_eds_only",
+          "module": "pinn_quad_eds_only",
+          "alloy": "Hastelloy-N",
+          "overrides": {},
+          "seeds": [
+            2,
+            3,
+            4
+          ]
+        },
+        {
+          "tag": "316H_quad_eds_only",
+          "module": "pinn_quad_eds_only",
+          "alloy": "316H",
+          "overrides": {},
+          "seeds": [
+            2,
+            3,
+            4
+          ]
+        },
+        {
+          "tag": "316SS_quad_eds_only",
+          "module": "pinn_quad_eds_only",
+          "alloy": "316SS",
+          "overrides": {},
+          "seeds": [
+            2,
+            3,
+            4
+          ]
+        }
+      ]
+    }
+  }
+}
