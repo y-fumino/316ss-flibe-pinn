@@ -14,6 +14,16 @@ regenerates every number, table, and figure in the paper from the released
 code, and reproduces the archived result ledgers bit-for-bit under the pinned
 environment.
 
+## Try it on your own data (no training required)
+
+```
+python tools/delta_from_csv.py --profile your_profile.csv --mass-loss 0.72 --density 8.86
+```
+
+Two routine measurements - a digitized depth profile (CSV: depth_um, C_wt_pct) and a
+gravimetric mass loss - return the model-free deficit Delta under the full analysis-convention
+grid, with a regime reading in the sense of the paper's two-axis diagnostic. Arithmetic only.
+
 ## Layout
 
 ```
