@@ -20,8 +20,10 @@ environment.
 python tools/delta_from_csv.py --profile your_profile.csv --mass-loss 0.72 --density 8.86
 ```
 
+(Note: `--mass-loss` must be in **mg/cm²** — not mdd or mg/dm² — and `--density` in **g/cm³**.)
+
 Two routine measurements - a digitized depth profile (CSV: depth_um, C_wt_pct) and a
-gravimetric mass loss - return the model-free deficit Delta under the full analysis-convention
+gravimetric mass loss (in mg/cm²) - return the model-free deficit Delta under the full analysis-convention
 grid, with a regime reading in the sense of the paper's two-axis diagnostic. Arithmetic only.
 
 ## Layout

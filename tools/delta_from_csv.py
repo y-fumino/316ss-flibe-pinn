@@ -40,6 +40,11 @@ def main():
     pf = a.plateau_from if a.plateau_from is not None else x[0] + 2.0 * (x[-1] - x[0]) / 3.0
     plateau = float(np.mean(c[x >= pf]))
     nominal = a.c_bulk if a.c_bulk is not None else plateau
+    if not (0.01 <= a.mass_loss <= 50):
+        print(f"WARNING: --mass-loss = {a.mass_loss} looks unusual for mg/cm^2 "
+              "(corrosion literature often reports mdd or mg/dm^2 - convert first).")
+    if not (2.0 <= a.density <= 25.0):
+        print(f"WARNING: --density = {a.density} looks unusual for g/cm^3.")
     print(f"points: {len(x)}  extent: {x[0]:.2f}-{x[-1]:.2f} um  plateau(mean beyond {pf:.1f} um): {plateau:.3f} wt%")
     print(f"baselines: nominal {nominal:.3f} / plateau {plateau:.3f} wt%   measured loss: {a.mass_loss:.3f} mg/cm^2\n")
     print(f"{'baseline':<10}{'integrand':<11}{'explained':>11}{'Delta':>9}{'Delta/measured':>16}")
