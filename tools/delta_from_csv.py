@@ -47,6 +47,13 @@ def main():
         print(f"WARNING: --density = {a.density} looks unusual for g/cm^3.")
     print(f"points: {len(x)}  extent: {x[0]:.2f}-{x[-1]:.2f} um  plateau(mean beyond {pf:.1f} um): {plateau:.3f} wt%")
     print(f"baselines: nominal {nominal:.3f} / plateau {plateau:.3f} wt%   measured loss: {a.mass_loss:.3f} mg/cm^2\n")
+    ceiling = a.density / 100.0 * (nominal - c[0]) * (x[-1] - x[0]) * 1e-4 * 1e3
+    occ = a.mass_loss / ceiling if ceiling > 0 else float("inf")
+    print(f"depletion budget ceiling rho*(C_bulk-C_surf)*L/100: {ceiling:.3f} mg/cm^2 -> budget occupancy {occ:.2f}")
+    if occ > 1.0:
+        print("  occupancy > 1: the balance cannot close geometrically - deficit regime before any inversion.")
+    elif occ > 0.6:
+        print("  occupancy near 1: little headroom - a deficit is likely.")
     print(f"{'baseline':<10}{'integrand':<11}{'explained':>11}{'Delta':>9}{'Delta/measured':>16}")
     fracs = []
     for bname, B in (("nominal", nominal), ("plateau", plateau)):
