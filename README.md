@@ -64,7 +64,7 @@ src/        alloy_configs.py            all alloy data (single source; data only
             pinn_quad_physical_basis.py    quadratic closure in the endpoint-curvature chart, 316SS (Table S10; batch N9)
             pinn_quad_polynomial_basis.py  parameterization-robustness control, polynomial basis (Table S11; batch N9)
             pinn_quad_eds_only.py       quadratic-closure probes, EDS-only (Tables S12-S14; batch N10)
-campaigns.json                          every batch of the verification campaign (N1–N11) plus the bootstrap jobs, declarative
+campaigns.json                          every batch of the verification campaign (N1–N11), declarative
 data/       *.csv                       digitized source datasets, exported from alloy_configs.py
                                         by tools/export_data.py (see Data provenance)
 results/    *.json                      the complete result ledger: 25 sealed inversion ledgers, one code generation
@@ -144,7 +144,10 @@ control that completes the symmetric design (§3.4, Table S18).
 | N9 | two-basis quadratic closure, 316SS: physical (endpoint–curvature) and polynomial charts | Section S6; Tables S10–S11 |
 | N10 | quadratic-closure probes, EDS-only (all three alloys) | Section S6; Tables S12–S14 |
 | N11 | 316SS anchor-free control (symmetric design; anchor bias appears only where the anchor is unsatisfiable) | §3.4, §5.5; Table S18 |
-| bootstrap | data-origin spread at each profile’s measured noise | Table S16; Table 2 note |
+
+The bootstrap resamples are **not** a `run_all` batch: they are produced by the
+three `tools/bootstrap_uncertainty.py` invocations shown above (seed-fixed,
+deterministic) and archived under `results/bootstrap/` (Table S16; Table 2 note).
 
 ## Results ↔ paper
 

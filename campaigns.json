@@ -1,5 +1,5 @@
 {
-  "comment": "Master re-run campaign ledger v3. One batch = one night. Run: python src/run_all.py --batch N1. Batches follow the paper: production ensembles (N1-N3), protocol-robustness axes (N4-N5), then the supplementary validations in section and table order (N6-N10).",
+  "comment": "Master re-run campaign ledger v3. One batch = one night. Run: python src/run_all.py --batch N1. Batches follow the paper: production ensembles (N1-N3), protocol-robustness axes (N4-N5), the supplementary validations in section and table order (N6-N10), and the 316SS anchor-free control completing the symmetric design (N11). The data-origin bootstrap is not a batch: tools/bootstrap_uncertainty.py, seed-fixed, archived under results/bootstrap/.",
   "seeds_full": [
     0,
     1,
@@ -283,7 +283,7 @@
       ]
     },
     "N9": {
-      "comment": "Two-basis quadratic-closure study for 316SS (Section S6, Tables S10-S11): eleven seeds trained directly in the endpoint-curvature chart, and an eleven-seed control trained from the identical starting function in a standard polynomial expansion. Establishes that the range-averaged magnitude is closure-robust while the individual endpoints and the curvature are not, and supplies the beta comparison (about fivefold in the polynomial basis, about twelvefold in the physical basis).",
+      "comment": "Two-basis quadratic-closure study for 316SS (Section S6, Tables S10-S11): eleven seeds trained directly in the endpoint-curvature chart, and an eleven-seed control trained from the identical starting function in a standard polynomial expansion. Establishes that the range-averaged magnitude is closure-robust while the individual endpoints and the curvature are not, and supplies the beta comparison (about fivefold in the polynomial basis, about eightfold in the physical basis, Table S10).",
       "jobs": [
         {
           "tag": "316SS_quad_physical_basis",
