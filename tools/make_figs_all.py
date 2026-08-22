@@ -57,11 +57,20 @@ def median_row(fname, alloy):
     med = st.median(r["alpha"] for r in rows)
     return next(r for r in rows if r["alpha"] == med)
 
-def median_alpha(fname, alloy):
-    rows = load(fname, alloy)
-    a = [r["alpha"] for r in rows]
+def reported_alpha(fname, alloy):
+    """Median [MAD] of alpha over the primary solution family (the Table 2
+    statistics: median and SCALED MAD), computed with the same classify_basins implementation the
+    tables use - single source, no fork."""
+    import importlib.util
+    _spec = importlib.util.spec_from_file_location(
+        "make_tables", HERE / "make_tables.py")
+    _mt = importlib.util.module_from_spec(_spec)
+    _spec.loader.exec_module(_mt)
+    rows = [r for r in load(fname, alloy) if r.get("converged", True)]
+    pri, _sec = _mt.classify_basins(rows, tol_logD0=0.30, tol_alpha=0.30)
+    a = [r["alpha"] for r in pri]
     med = st.median(a)
-    return med, st.median([abs(x - med) for x in a])
+    return med, 1.4826 * st.median([abs(x - med) for x in a])
 
 def retrain_verified(run_pinn, cfg, row):
     """Retrain one seed with the released solver and verify bit-identity of
@@ -98,9 +107,13 @@ def mass_curve(model, cfg, n=200):
 # purpose: the Delta conventions have a single implementation, which this
 # figure must not fork.
 DELTA = {
-    "316SS":       {"band": (-103.0, 18.0), "central": None},
-    "Hastelloy-N": {"band": (82.0, 88.0),   "central": 84.0, "show": "+84 %"},
-    "316H":        {"band": (94.4, 94.6),   "central": 94.5, "show": "+95 %"},
+    # centrals: production/depletion-window headline readings; bands: the full
+    # twelve-cell convention-and-window grid of Table S19 (2 baselines x
+    # 2 integrands x 3 windows), regenerated 2026-08 from the single-source
+    # make_stables generator.
+    "316SS":       {"band": (-102.3, 18.2), "central": -45.2, "show": "-45 %"},
+    "Hastelloy-N": {"band": (59.5, 88.7),   "central": 84.0,  "show": "+84 %"},
+    "316H":        {"band": (90.5, 94.7),   "central": 94.5,  "show": "+95 %"},
 }
 
 # ------------------------------------------------------------------ figures
@@ -120,22 +133,57 @@ def fig1(model, cfg):
     fig.savefig(OUT / "fig1_316ss_profile.png", dpi=300); print("fig1 written")
 
 def fig2(model, cfg):
-    fig, ax = plt.subplots(figsize=(6.2, 4.4))
+    import json as _json
+    fig, (ax, ax2) = plt.subplots(2, 1, figsize=(6.9, 6.1))
+    # ---- (a) mass channel with the audit-tolerance ribbon ----
     t_hr, m = mass_curve(model, cfg)
-    ax.plot(t_hr, m, "-", lw=1.1, color="tab:blue", alpha=0.35,
-            label="w(1,t)\u00b7conv (inter-anchor segments unconstrained)")
-    t_anchor = np.asarray(cfg["mass_times_hr"], float)
-    Xa = np.column_stack([np.ones(len(t_anchor)), t_anchor / cfg["T_max_hr"]])
     C_range = cfg["C_bulk"] - cfg["C_surface"]
     conv = cfg["rho"] * (C_range / 100.0) * (cfg["domain_um"] * 1e-4) * 1000.0
+    ax.plot(t_hr, m, "-", lw=1.1, color="tab:blue", alpha=0.5,
+            label="w(1,t)\u00b7conv (inter-anchor: unconstrained; audited in (b))")
+    t_anchor = np.asarray(cfg["mass_times_hr"], float)
+    Xa = np.column_stack([np.ones(len(t_anchor)), t_anchor / cfg["T_max_hr"]])
     wa = model.predict(Xa)[:, 1] * conv
-    ax.plot(t_anchor, wa, "x", ms=9, mew=2.2, color="tab:blue",
-            label="model at anchor times")
-    ax.plot(cfg["mass_times_hr"], cfg["dW_data"], "s", ms=7, color="0.25",
-            mfc="none", label="gravimetric anchors")
+    ax.plot(t_anchor, wa, "x", ms=9, mew=2.2, color="tab:blue", label="model at anchor times")
+    ax.plot(cfg["mass_times_hr"], cfg["dW_data"], "s", ms=7, color="0.25", mfc="none",
+            label="gravimetric anchors")
     ax.set_xlabel("time (h)"); ax.set_ylabel("mass loss (mg/cm\u00b2)")
-    ax.legend(fontsize=9); fig.tight_layout()
-    fig.savefig(OUT / "fig2_316ss_mass.png", dpi=300); print("fig2 written")
+    ax.legend(fontsize=8, loc="lower right")
+    ax.text(0.02, 0.95, "(a)", transform=ax.transAxes, fontsize=11, fontweight="bold", va="top")
+    # ---- (b) audited channels over the time sweep, all production seeds ----
+    led = None
+    for p in ("results/316SS_coupled.json", "../results/316SS_coupled.json"):
+        try:
+            led = _json.load(open(p, encoding="utf-8")); break
+        except FileNotFoundError:
+            continue
+    if led is None:
+        raise FileNotFoundError("316SS_coupled.json not found for fig2 panel (b)")
+    blk = next(v for v in led.values() if isinstance(v, dict) and "seeds" in v)
+    mx0 = mxg = 0.0
+    for k, r in enumerate(blk["seeds"]):
+        ts = r["audit"].get("time_sweep")
+        if not ts:
+            continue
+        t = np.asarray(ts["t_grid"], float)
+        w0 = np.asarray(ts["w0_of_t"], float)
+        wg = np.asarray(ts["w_gap_of_t"], float)
+        mx0 = max(mx0, np.abs(w0).max()); mxg = max(mxg, np.abs(wg).max())
+        ax2.plot(t, w0, "-", lw=0.9, color="tab:blue", alpha=0.45,
+                 label="w(0,t) per seed" if k == 0 else None)
+        ax2.plot(t, wg, "-", lw=0.9, color="tab:orange", alpha=0.45,
+                 label="w~gap~(t) per seed".replace("~", "") if k == 0 else None)
+    ax2.axhspan(-0.05, 0.05, color="0.88", alpha=0.6, zorder=0, label="audit tolerance \u00b10.05")
+    ax2.axvline(1.0, color="0.35", lw=1.0, ls=":")
+    ax2.text(1.0, ax2.get_ylim()[1] * 0.9 if ax2.get_ylim()[1] else 0.05, " t\u2081", fontsize=9, color="0.35")
+    ax2.text(0.02, 0.06, f"max |w(0,t)| = {mx0:.3f}   max |w_gap(t)| = {mxg:.3f}",
+             transform=ax2.transAxes, fontsize=8.5)
+    ax2.set_xlabel("normalized time t"); ax2.set_ylabel("audited channels (normalized)")
+    ax2.set_ylim(-0.075, 0.075)
+    ax2.legend(fontsize=8, loc="upper right")
+    ax2.text(0.02, 0.95, "(b)", transform=ax2.transAxes, fontsize=11, fontweight="bold", va="top")
+    fig.tight_layout()
+    fig.savefig(OUT / "fig2_316ss_mass.png", dpi=300); print("fig2 written (two-panel)")
 
 def fig3(models_cfgs):
     fig, axes = plt.subplots(1, 2, figsize=(9.6, 4.6))
@@ -166,7 +214,7 @@ def fig4():
     ]
     fig, ax = plt.subplots(figsize=(6.4, 5.0))
     for name, fn, key, color in pts:
-        a, mad = median_alpha(fn, key)
+        a, mad = reported_alpha(fn, key)
         dd = DELTA[name]; lo, hi = dd["band"]
         if dd["central"] is None:
             ax.errorbar(a, 0.5 * (lo + hi), xerr=mad,

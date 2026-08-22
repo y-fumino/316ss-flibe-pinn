@@ -1,5 +1,5 @@
 {
-  "comment": "Master re-run campaign ledger v2. One batch = one night. Run: python src/run_all.py --batch N1",
+  "comment": "Master re-run campaign ledger v3. One batch = one night. Run: python src/run_all.py --batch N1. Batches follow the paper: production ensembles (N1-N3), protocol-robustness axes (N4-N5), then the supplementary validations in section and table order (N6-N10).",
   "seeds_full": [
     0,
     1,
@@ -136,7 +136,7 @@
       ]
     },
     "N6": {
-      "comment": "Section S1 validation under the production protocol: 316SS coupled inversion with a single gravimetric anchor (the 3000 h audit-convention value, 0.547 mg/cm^2) in lieu of the six-point series - the Hastelloy-N-like data structure. Establishes whether reducing the mass constraint to one time point biases the fitted parameters.",
+      "comment": "Section S3 validation under the production protocol: 316SS coupled inversion with a single gravimetric anchor (the 3000 h audit-convention value, 0.547 mg/cm^2) in lieu of the six-point series - the Hastelloy-N-like data structure. Establishes whether reducing the mass constraint to one time point biases the fitted parameters.",
       "jobs": [
         {
           "tag": "316SS_single_anchor",
@@ -167,7 +167,7 @@
       ]
     },
     "N7": {
-      "comment": "Synthetic verification (reduced S2 design): four-quadrant sign recovery against known ground truth, and the mass-inflation sweep locating the alpha sign-flip threshold. Three seeds per configuration.",
+      "comment": "Synthetic verification (Section S4, reduced design): four-quadrant sign recovery against known ground truth, and the mass-inflation sweep locating the alpha sign-flip threshold. Three seeds per configuration.",
       "jobs": [
         {
           "tag": "S2_four_quadrant",
@@ -194,7 +194,7 @@
       ]
     },
     "N8": {
-      "comment": "Domain-size and outlier characterization, eleven seeds per configuration (Section S3): full-extent domains for Hastelloy-N (70 um) and 316H (50 um), reduced domain for 316SS (40 um), and the outlier-inclusion variant for 316H.",
+      "comment": "Domain-size and outlier characterization, eleven seeds per configuration (Section S5): full-extent domains for Hastelloy-N (70 um) and 316H (50 um), reduced domain for 316SS (40 um), and the outlier-inclusion variant for 316H.",
       "jobs": [
         {
           "tag": "HN_fullextent",
@@ -283,7 +283,50 @@
       ]
     },
     "N9": {
-      "comment": "Quadratic-closure probes, EDS-only, polynomial basis (Tables S10a-S10c): regenerates the pre-reform inherited exhibits as a current-generation campaign. Three seeds per alloy.",
+      "comment": "Two-basis quadratic-closure study for 316SS (Section S6, Tables S10-S11): eleven seeds trained directly in the endpoint-curvature chart, and an eleven-seed control trained from the identical starting function in a standard polynomial expansion. Establishes that the range-averaged magnitude is closure-robust while the individual endpoints and the curvature are not, and supplies the beta comparison (about fivefold in the polynomial basis, about twelvefold in the physical basis).",
+      "jobs": [
+        {
+          "tag": "316SS_quad_physical_basis",
+          "module": "pinn_quad_physical_basis",
+          "alloy": "316SS",
+          "overrides": {},
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            42
+          ]
+        },
+        {
+          "tag": "316SS_quad_polynomial_basis",
+          "module": "pinn_quad_polynomial_basis",
+          "alloy": "316SS",
+          "overrides": {},
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            42
+          ]
+        }
+      ]
+    },
+    "N10": {
+      "comment": "Quadratic-closure probes, EDS-only, all three alloys (Section S6, Tables S12-S14): regenerates the pre-reform inherited exhibits as a current-generation campaign. Three seeds per alloy, matching the three-seed EDS-only probes of the run inventory in Section 3.4.",
       "jobs": [
         {
           "tag": "HN_quad_eds_only",
@@ -318,6 +361,12 @@
             4
           ]
         }
+      ]
+    },
+    "N11": {
+      "comment": "316SS EDS-only linear ensemble (eleven seeds): the anchor-free counterpart of the production campaign. Establishes whether the mass anchor biases the 316SS coupled estimate, independently of the audit.",
+      "jobs": [
+        {"tag": "316SS_eds_only", "module": "pinn_eds_only", "alloy": "316SS", "overrides": {}}
       ]
     }
   }

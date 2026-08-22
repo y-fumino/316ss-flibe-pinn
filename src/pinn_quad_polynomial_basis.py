@@ -1,5 +1,5 @@
 """
-Parameterization-Robustness Control — Polynomial Basis (Table S4b)
+Parameterization-Robustness Control — Polynomial Basis (Table S11)
 ==========================================================================
 316SS coupled inversion with the quadratic closure trained in a standard
 polynomial expansion,
@@ -7,7 +7,7 @@ polynomial expansion,
     D(C) = D0 [1 + a1 (1 - C) + a2 (1 - C)^2],
 
 as the basis-independence control for the physical-basis campaign of
-Table S4a (pinn_quad_physical_basis.py): identical starting function
+Table S10 (pinn_quad_physical_basis.py): identical starting function
 (a1 = +1, a2 = 0  <=>  D_wall = 2e-14, beta = 0), identical protocol,
 different optimizer coordinates. The raw coefficients (a1, a2) are
 transformed to the endpoint-curvature set (D0, D_wall, beta) for
@@ -16,7 +16,7 @@ tabulation: D_wall = D0 (1 + a1 + a2), beta = -D0 a2.
 Pre-registered expectation (2026-07): a2 statistically indistinguishable
 from zero (legacy-protocol result: -0.040 +/- 0.156); sign of a1 negative
 in 11/11. The outcome - a continuous equal-loss family rather than a
-collapse to zero - is recorded in Section S4 of the paper.
+collapse to zero - is recorded in Section S6 of the paper.
 Final protocol: float64, unified three-phase training, audit; w_mass = 10.
 """
 import deepxde as dde
@@ -24,40 +24,20 @@ import numpy as np
 import torch
 import json
 
+import alloy_configs as AC
+
 SEEDS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 42]
 RUN_TAG = "316SS_quad_polynomial_basis"
+W_MASS = 10
 PROTOCOL_STR = ("Quadratic closure check: Adam 15k@1e-3 + 10k@1e-4 → L-BFGS "
                 "(restart ≤2), float64, α₁₀=+1.0, α₂₀=0.0, w_mass=10")
 
-ALLOY_316SS = {
-    "name": "316SS",
-    "temperature": "700°C",
-    "duration": "3000h",
-    "C_bulk": 17.0,
-    "C_surface": 1.2,
-    "rho": 8.0,
-    "domain_um": 80.0,
-    "T_max_hr": 3000.0,
-    "w_mass": 10,
-    "depth_um": np.array([
-        0.000, 1.170, 3.029, 4.301, 6.259, 8.017, 9.683, 11.346, 13.106,
-        14.669, 16.336, 18.000, 19.763, 21.426, 23.092, 24.757, 26.420,
-        27.989, 29.848, 31.316, 33.175, 34.840, 36.607, 38.072, 39.739,
-        41.403, 43.166, 44.829, 46.591, 49.725, 51.489, 53.252, 54.914,
-        56.579, 58.245, 59.910, 61.671, 63.337, 65.000, 66.567, 68.525,
-        70.093, 71.759, 73.325, 74.990, 76.752, 78.517, 79.985
-    ]),
-    "Cr_wt": np.array([
-        1.187, 5.479, 6.814, 7.704, 8.595, 12.297, 11.264, 13.338, 15.709,
-        19.262, 16.602, 17.789, 17.496, 18.682, 17.206, 17.505, 18.248,
-        16.772, 17.958, 18.257, 19.888, 19.595, 16.944, 18.713, 16.645,
-        16.652, 18.134, 18.729, 14.864, 18.143, 16.815, 16.670, 18.744,
-        19.339, 17.271, 17.570, 18.461, 17.281, 19.355, 18.618, 18.770,
-        17.589, 16.707, 16.705, 16.119, 17.601, 14.942, 15.832
-    ]),
-    "mass_times_hr": np.array([1000.0, 1000.0, 2000.0, 2000.0, 3000.0, 3000.0]),
-    "dW_data": np.array([0.170, 0.221, 0.318, 0.340, 0.456, 0.547]),
-}
+# Alloy data come from the single source of truth (alloy_configs.py).
+# This campaign previously carried its own copy, whose dW_data was a
+# superseded digitization vintage (0.170/0.221/0.318/0.340 at 1000/2000 h,
+# same means as the current 0.174/0.217/0.308/0.350). Synchronized 2026-08.
+ALLOY_316SS = AC.get_config("316SS")
+ALLOY_316SS["w_mass"] = W_MASS   # protocol knob, not alloy data
 
 
 def run_pinn(cfg, seed):
@@ -188,6 +168,29 @@ def run_pinn(cfg, seed):
         "u_min_on_grid": float(u_d.min()),
         "u_max_on_grid": float(u_d.max()),
         "audit_pass": audit_pass,
+    }
+
+    # --- Supplementary time-sweep diagnostic (gate unchanged: Eq. (12b) at t = 1) ---
+    _t_extra = t_norm.ravel() if 't_norm' in locals() else np.array([1.0])
+    t_sweep = np.unique(np.round(np.concatenate([np.linspace(0.0, 1.0, 21), _t_extra, [1.0]]), 12))
+    _w0_t, _gap_t = [], []
+    for _tv in t_sweep:
+        _g = np.hstack([x_dense, np.full_like(x_dense, _tv)])
+        _yv = model.predict(_g)
+        _uv, _wv = _yv[:, 0], _yv[:, 1]
+        _integ = float(np.trapezoid(1.0 - _uv, x_dense.ravel()))
+        _w0_t.append(float(_wv[0]))
+        _gap_t.append(float(_wv[-1] - _wv[0] - _integ))
+    _i1 = int(np.argmin(np.abs(t_sweep - 1.0)))
+    assert abs(_w0_t[_i1] - audit["w_pred_at_x0_t1"]) < 1e-12 and \
+           abs(_gap_t[_i1] - audit["w_gap"]) < 1e-12, \
+        "time-sweep t=1 must reproduce the gate quantities exactly (definition unchanged)"
+    audit["time_sweep"] = {
+        "t_grid": [float(v) for v in t_sweep],
+        "w0_of_t": _w0_t,
+        "w_gap_of_t": _gap_t,
+        "max_abs_w0": float(max(abs(v) for v in _w0_t)),
+        "max_abs_w_gap": float(max(abs(v) for v in _gap_t)),
     }
     return {
         "seed": seed, "D0": float(D0),
